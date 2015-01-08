@@ -8,8 +8,14 @@ This voxel engine was created as a programming exercise, with the goal of making
 ![screenshot](/voxel1.png)
 
 To run, you must use the gradle task
+
+Linux/OSX:
 ```
 ./gradlew desktop:run
+```
+Windows:
+```
+gradlew.bat desktop:run
 ```
 
 Controls are explained in the in-game HUD
