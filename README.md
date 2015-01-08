@@ -5,6 +5,8 @@ A voxel engine (like Minecraft) written in Kotlin
 
 This voxel engine was created as a programming exercise, with the goal of making a Minecraft-like voxel engine using the Kotlin programming language
 
+![screenshot](/voxel1.png)
+
 To run, you must use the gradle task
 ```
 ./gradlew desktop:run
