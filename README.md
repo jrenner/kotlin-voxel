@@ -18,6 +18,12 @@ Windows:
 gradlew.bat desktop:run
 ```
 
+If you want to edit the code with IntelliJ IDEA indepedent from gradle, you can create idea project files with the task:
+```
+./gradlew idea (windows: gradlew.bat idea)
+```
+Then open the .ipr file with IntelliJ
+
 Controls are explained in the in-game HUD
 
 additionally, you may press 'G' to see OpenGL debugging info, or 'V' to reset the view.
