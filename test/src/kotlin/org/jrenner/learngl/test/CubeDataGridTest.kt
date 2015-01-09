@@ -140,7 +140,7 @@ class CubeDataGridTest {
         val cdg = basicCDG()
         val maxElevation = 5
         for (cube in cdg) {
-            if(cube.y > maxElevation) {
+            if(cube.yf > maxElevation) {
                 cube.cubeType = CubeType.Void
             } else {
                 cube.cubeType = CubeType.Grass

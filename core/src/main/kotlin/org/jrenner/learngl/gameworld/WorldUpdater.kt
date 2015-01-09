@@ -7,13 +7,14 @@ import org.jrenner.learngl.cube.CubeDataGrid
 import org.jrenner.learngl
 import com.badlogic.gdx.utils
 import org.jrenner.learngl.View
-import com.badlogic.gdx.utils.ObjectSet
 import org.jrenner.learngl.utils.threeIntegerHashCode
 import org.jrenner.learngl.view
 import com.badlogic.gdx.math.Frustum
 import com.badlogic.gdx.utils.Pools
 import java.util.Comparator
 import org.jrenner.learngl.DebugPool
+import com.badlogic.gdx.utils.IntSet
+import org.jrenner.learngl.utils.inFrustum
 
 /** updates chunks in the world on a separate Thread */
 class WorldUpdater(val wor: World): Runnable {
@@ -26,7 +27,7 @@ class WorldUpdater(val wor: World): Runnable {
      * or already queued for creation
      * the world updater
      */
-    val tempChunkHashCodeSet = ObjectSet<Int>()
+    val tempChunkHashCodeSet = IntSet()
     val tempChunks = Arr<Chunk>()
 
     /** camPos and frustum will be set by the View in View.render */
@@ -35,7 +36,7 @@ class WorldUpdater(val wor: World): Runnable {
 
     val updateIntervalMillis = 250L
     var maxDist = View.maxViewDist
-    val queueLimit = 10
+    val queueLimit = 100
     var worldQueueSize = 0
 
     override fun run() {
@@ -43,7 +44,9 @@ class WorldUpdater(val wor: World): Runnable {
             while (true) {
                 synchronized(wor) {
                     retrieveDataFromWorld()
+                }
                     createChunksInViewRange()
+                synchronized(wor) {
                     communicateUpdateToWorld()
                 }
                 Thread.sleep(updateIntervalMillis)
@@ -103,7 +106,7 @@ class WorldUpdater(val wor: World): Runnable {
             // does this chunk already exist?
             val hasChunk = worldUpdaterHasChunkAt(chunkX, chunkY, chunkZ)
             // lazily create chunks only when the camera looks at them
-            val inView = view.inFrustum(chunkX, chunkY, chunkZ, Chunk.chunkSizef, tempFrustum)
+            val inView = inFrustum(chunkX, chunkY, chunkZ, Chunk.chunkSizef, tempFrustum)
             if (!hasChunk && inView) {
                 val dist2 = camPos.dst2(chunkX, chunkY, chunkZ)
                 // IN RANGE

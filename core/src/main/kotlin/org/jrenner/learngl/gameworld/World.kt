@@ -118,7 +118,7 @@ class World(val width: Int, val height: Int, val depth: Int) {
         }
     }
 
-    fun hasCubeAt(x: Float, y: Float, z: Float): Boolean {
+    /*fun hasCubeAt(x: Float, y: Float, z: Float): Boolean {
         if (!hasChunkAt(x, y, z)) {
             return false
         } else {
@@ -129,26 +129,26 @@ class World(val width: Int, val height: Int, val depth: Int) {
                 throw GdxRuntimeException("world.hasCubeAt($x, $y, $z), error: world has cube, but chunk doesn't!")
             }
         }
-    }
+    }*/
 
     fun getCubeAt(x: Float, y: Float, z: Float):CubeData {
         val chunk = getChunkAt(x, y, z)
         return chunk.dataGrid.getCubeAt(x, y, z)
     }
 
-    fun hasChunkAt(x: Float, y: Float, z: Float): Boolean {
+    /*fun hasChunkAt(x: Float, y: Float, z: Float): Boolean {
         val sx = snapToChunkOrigin(x).toInt()
         val sy = snapToChunkOrigin(y).toInt()
         val sz = snapToChunkOrigin(z).toInt()
         return chunkHashCodeMap.containsKey(threeIntegerHashCode(sx, sy, sz))
-        /*for (i in 0..chunks.size - 1) {
+        *//*for (i in 0..chunks.size - 1) {
             val chunk = chunks[i]
             if (chunk.dataGrid.hasCubeAt(x, y, z)) {
                 return true
             }
         }
-        return false*/
-    }
+        return false*//*
+    }*/
 
     fun addChunk(chunk: Chunk) {
         chunks.add(chunk)
@@ -195,7 +195,7 @@ class World(val width: Int, val height: Int, val depth: Int) {
                     val cdg = CubeDataGrid.create(origin.x, origin.y, origin.z)
                     cdg.init(origin.x, origin.y, origin.z)
                     for (chunk in cdg) {
-                        chunk.cubeType =CubeType.Grass
+                        chunk.cubeType = CubeTypes.Grass
                     }
                     val chunk = Chunk.obtain(cdg)
                     addChunk(chunk)
@@ -245,13 +245,13 @@ class World(val width: Int, val height: Int, val depth: Int) {
         //val start = TimeUtils.nanoTime()
         NoiseLayerManager.generateAllNoise(cdg)
         for (cube in cdg) {
-            val x = (cube.x - cdg.origin.x).toInt()
-            val z = (cube.z - cdg.origin.z).toInt()
+            val x = (cube.xf - cdg.origin.x).toInt()
+            val z = (cube.zf - cdg.origin.z).toInt()
             val elev = NoiseLayerManager.getNoise(x, z) * wor.height
-            if (cube.y > elev) {
-                cube.cubeType =CubeType.Void
+            if (cube.yf > elev) {
+                cube.cubeType = CubeTypes.Void
             } else {
-                cube.cubeType =CubeType.Grass
+                cube.cubeType = CubeTypes.Grass
             }
         }
         //val elapsed = TimeUtils.nanoTime() - start

@@ -5,10 +5,16 @@ import com.badlogic.gdx.math.Vector3
 import org.jrenner.learngl.Direction
 import org.jrenner.learngl
 
-enum class CubeType {
+/*enum class CubeType {
     Grass
     Water
     Void // inactive or void cube
+}*/
+
+object CubeTypes {
+    val Grass: Byte = 0
+    val Water: Byte = 1
+    val Void: Byte = 2
 }
 
 
@@ -16,10 +22,13 @@ class CubeData {
     class object {
         private val tmp = Vector3()
     }
-    public var x: Float = 0f
-    public var y: Float = 0f
-    public var z: Float = 0f
-    var cubeType = CubeType.Void
+    public val xf: Float get() = x.toFloat()
+    public val yf: Float get() = y.toFloat()
+    public val zf: Float get() = z.toFloat()
+    public var x: Short = 0
+    public var y: Short = 0
+    public var z: Short = 0
+    var cubeType: Byte = CubeTypes.Void
     var hiddenFaces: Int = 0
     val hiddenFacesCount: Int
         get() {
@@ -45,7 +54,7 @@ class CubeData {
         }
 
     fun getPositionTempVec(): Vector3 {
-        return tmp.set(x, y, z)
+        return tmp.set(xf, yf, zf)
     }
 }
 

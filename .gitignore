@@ -1,6 +1,7 @@
 ## Java
 
 generated-fonts
+kotlin-voxel.jar
 
 *.class
 *.war

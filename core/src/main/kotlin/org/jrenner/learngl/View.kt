@@ -22,7 +22,7 @@ import com.badlogic.gdx.math.Frustum
 
 class View {
     class object {
-        var maxViewDist = 160f
+        var maxViewDist = 100f
             set(d) {
                 $maxViewDist = MathUtils.clamp(d, 20f, 240f)
             }
@@ -223,12 +223,5 @@ class View {
             shapes.line(0f, i.toFloat(), time * mult, i.toFloat())
         }
         shapes.end()
-    }
-
-    fun inFrustum(x: Float, y: Float, z: Float, bboxRadius: Float, frustum: Frustum): Boolean {
-        val w = bboxRadius
-        val h = bboxRadius
-        val d = bboxRadius
-        return frustum.boundsInFrustum(x, y, z, w, h, d)
     }
 }

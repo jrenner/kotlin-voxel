@@ -99,7 +99,7 @@ class ChunkMesh() {
         for (cubeData in cdg) {
             //println("create cube at: ${cubeData.position.fmt}")
             //println("cube: ${cubeData.cubeType}")
-            if (cubeData.cubeType != CubeType.Void) {
+            if (cubeData.cubeType != CubeTypes.Void) {
                 addCube(cubeData.getPositionTempVec(), CUBE_SIZE, cubeData.hiddenFaces)
             }
         }

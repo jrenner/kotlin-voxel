@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.StringBuilder
 import org.jrenner.learngl
 import org.jrenner.learngl.gameworld.World
 import org.jrenner.learngl.gameworld.CubeData
-import org.jrenner.learngl.gameworld.CubeType
+import org.jrenner.learngl.gameworld.CubeTypes
 
 class IntVector3 {
     var x: Int = 0
@@ -49,14 +49,14 @@ fun CubeDataGrid.calculateHiddenFaces(wor: World = learngl.world) {
     for (cubeData: CubeData in this) {
         cubeData.hiddenFaces = 0
         if (!learngl.hiddenFacesEnabled) continue
-        if (cubeData.cubeType == CubeType.Void) {
+        if (cubeData.cubeType == CubeTypes.Void) {
             continue
             //cubeData.hiddenFaces = Direction.ALL_FACES
         } else {
             for (i in 0..Direction.allSize - 1) {
-                var x = cubeData.x
-                var y = cubeData.y
-                var z = cubeData.z
+                var x = cubeData.xf
+                var y = cubeData.yf
+                var z = cubeData.zf
                 val dir = Direction.all[i]
                 when (dir) {
                     Direction.Up -> y++
@@ -69,7 +69,7 @@ fun CubeDataGrid.calculateHiddenFaces(wor: World = learngl.world) {
                 // only care about hidden faces local to this cube
                 if (this.hasCubeAt(x, y, z)) {
                     val cube = getCubeAt(x, y, z)
-                    if (cube.cubeType != CubeType.Void) {
+                    if (cube.cubeType != CubeTypes.Void) {
                         // HIDDEN
                         cubeData.hiddenFaces = cubeData.hiddenFaces or dir
                     }

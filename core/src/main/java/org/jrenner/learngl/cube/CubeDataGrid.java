@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jrenner.learngl.Main;
 import org.jrenner.learngl.gameworld.Chunk;
 import org.jrenner.learngl.gameworld.CubeData;
-import org.jrenner.learngl.gameworld.CubeType;
+import org.jrenner.learngl.gameworld.CubeTypes;
 
 import java.util.Iterator;
 
@@ -64,9 +64,9 @@ public class CubeDataGrid implements Iterable<CubeData> {
 					//CubeData cubeData = Pools.obtain(CubeData.class);
 					CubeData cubeData = grid[y][x][z];
 					//cubeData.getPosition().set(x + origin.x, y + origin.y, z + origin.z);
-					cubeData.setX(x + origin.x);
-					cubeData.setY(y + origin.y);
-					cubeData.setZ(z + origin.z);
+					cubeData.setX((short) (x + origin.x));
+					cubeData.setY((short) (y + origin.y));
+					cubeData.setZ((short) (z + origin.z));
 				}
 			}
 		}
@@ -115,7 +115,7 @@ public class CubeDataGrid implements Iterable<CubeData> {
 		int y;
 		for (y = height-1; y >= 0; y--) {
 			CubeData cube = getCubeAt(x, y, z);
-			if (cube.getCubeType() != CubeType.Void) {
+			if (cube.getCubeType() != CubeTypes.Void) {
 				return y;
 			}
 		}
@@ -200,7 +200,7 @@ public class CubeDataGrid implements Iterable<CubeData> {
 	public int numberOfNonVoidCubes() {
 		int total = 0;
 		for (CubeData cube : this) {
-			if (cube.getCubeType() != CubeType.Void) {
+			if (cube.getCubeType() != CubeTypes.Void) {
 				total++;
 			}
 		}
