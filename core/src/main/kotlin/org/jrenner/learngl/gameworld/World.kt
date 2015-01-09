@@ -196,6 +196,17 @@ class World(val width: Int, val height: Int, val depth: Int) {
         return result
     }
 
+    private val bboxElevations = IntArray(4)
+
+    fun getBoundingBoxElevation(x: Float, z: Float, width: Float, depth: Float): Int {
+        val elevs = bboxElevations
+        elevs[0] = getElevation(x, z)
+        elevs[1] = getElevation(x+width, z)
+        elevs[2] = getElevation(x+width, z+depth)
+        elevs[3] = getElevation(x, z+depth)
+        return elevs.max()!!
+    }
+
     /** should only be used by test package */
     fun createAllChunks() {
         chunks.clear()

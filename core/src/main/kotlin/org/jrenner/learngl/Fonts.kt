@@ -14,9 +14,15 @@ class Fonts {
     {
         val gen = SmartFontGenerator()
         val fileHandle = Gdx.files.local("fonts/Exo-Regular.otf")
-        val size: Int = 14
+        val size: Int = 18
         val fontName = "exo" + size
+        println("$fontName")
         val chars = FreeTypeFontGenerator.DEFAULT_CHARS
         normal = gen.createFont(fileHandle, fontName, size, chars)
     }
+
+    fun dispose() {
+        normal.dispose()
+    }
+
 }

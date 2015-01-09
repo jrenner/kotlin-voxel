@@ -8,6 +8,8 @@ import kotlin.properties.Delegates
 import org.jrenner.learngl
 import com.badlogic.gdx.Input
 import org.jrenner.learngl.View
+import com.badlogic.gdx.Input.Keys
+import org.jrenner.learngl.view
 
 class GameInput {
     val input = Gdx.input!!
@@ -36,25 +38,34 @@ class GameInput {
 
             override fun keyDown(keycode: Int): Boolean {
                 when (keycode) {
-                    Input.Keys.G -> learngl.main.profileRequested = true // profile OpenGL
-                    Input.Keys.V -> {
+                    Keys.G -> learngl.main.profileRequested = true // profile OpenGL
+                    Keys.V -> {
                         learngl.main.resetViewRequested = true
                     }
-                    /*Input.Keys.H -> {
+                    /*Keys.H -> {
                         learngl.hud.enabled = !learngl.hud.enabled
                         println("HUD enabled: ${learngl.hud.enabled}")
                     }*/
-/*                    Input.Keys.F -> {
+/*                    Keys.F -> {
                         learngl.hiddenFacesEnabled = !learngl.hiddenFacesEnabled
                         println("hideFaces: $org.jrenner.learngl.hiddenFacesEnabled")
                     }*/
-                    Input.Keys.PLUS -> {
+                    Keys.PLUS -> {
                         View.maxViewDist += 10f
                         println("MAX VIEW DIST: ${View.maxViewDist}")
                     }
-                    Input.Keys.MINUS -> {
+                    Keys.MINUS -> {
                         View.maxViewDist -= 10f
                         println("MAX VIEW DIST: ${View.maxViewDist}")
+                    }
+                    Keys.SPACE -> {
+                        view.walkingEnabled = !view.walkingEnabled
+                        println("walking mode: ${view.walkingEnabled}")
+                        when (view.walkingEnabled) {
+                            true -> view.camControl.setVelocity(View.WALKING_MAX_VELOCITY)
+                            false -> view.camControl.setVelocity(View.FLYING_MAX_VELOCITY)
+                        }
+
                     }
                     else -> Unit
                 }

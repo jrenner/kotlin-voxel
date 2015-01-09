@@ -50,10 +50,13 @@ class HUD {
             val c = view.camera.position
             sb + "\nChunks, created: ${world.chunksCreated}, removed: ${world.chunksRemoved}"
             val camElev = world.getElevation(c.x, c.z)
-            sb + "\nCamera: %.1f, %.1f %.1f\n\tAltitude above ground: $camElev: $camElev".format(c.x, c.y, c.z)
+            sb + "\nCamera: %.1f, %.1f %.1f\n\tAltitude above ground: $camElev".format(c.x, c.y, c.z)
+            val moveMode = if (view.walkingEnabled) "Walking" else "Flying"
+            sb + "\nMovement mode: ${moveMode}"
             sb + "\nView Distance: ${View.maxViewDist}"
-            sb + "\n\nControls:\n\tW, A, S, D to move\n\tClick and hold mouse to look around\n\t- and + to change view distance"
-            sb + "\nHigh view distances require\nexponentially large amounts of memory"
+            sb + "\nWARNING: \nHigh view distances require\nexponentially large amounts of memory"
+            sb + "\n\nCONTROLS:\n\tW, A, S, D to move\n\tClick and hold mouse to look around\n\t- and + to change view distance"
+            sb + "\nSpace to switch flying/walking"
             info.setText(sb.toString())
         }
     }

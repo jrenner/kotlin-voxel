@@ -63,8 +63,6 @@ public class SmartFontGenerator {
 		if (!loaded || forceGeneration) {
 			forceGeneration = false;
 			float width = Gdx.graphics.getWidth();
-			float ratio = width / referenceScreenWidth; // use 1920x1280 as baseline, arbitrary
-			float baseSize = 28f; // for 28 sized fonts at baseline width above
 
 			// store screen width for detecting screen size change
 			// on later startups, which will require font regeneration

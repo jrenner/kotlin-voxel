@@ -86,10 +86,8 @@ class PointLight {
         velocity.y = 0f
         if (dist < 1f) {
             setNextDest()
-            println("a")
         } else {
             velocity.add(diff.nor().scl(accel))
-            //if (this == lights.pointLights[1]) println("c")
         }
         velocity.scl(0.98f)
         pos.add(velocity.x, 0f, velocity.z)

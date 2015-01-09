@@ -19,17 +19,21 @@ import org.jrenner.learngl.cube.CubeDataGrid
 import com.badlogic.gdx.math.MathUtils
 import org.jrenner.learngl.gameworld.Chunk
 import com.badlogic.gdx.math.Frustum
+import org.jrenner.learngl.gameworld.World
 
 class View {
     class object {
-        var maxViewDist = 100f
+        var maxViewDist = 120f
             set(d) {
-                $maxViewDist = MathUtils.clamp(d, 20f, 400f)
+                $maxViewDist = MathUtils.clamp(d, 20f, 600f)
             }
+        val WALKING_MAX_VELOCITY = 5f
+        val FLYING_MAX_VELOCITY = 30f
 
     }
     val gl = Gdx.gl!!
     val camera = PerspectiveCamera(67f, screenWidth.toFloat(), screenHeight.toFloat())
+    var walkingEnabled = false
     val fogColor = Color(0.4f, 0.4f, 0.45f, 1.0f) // alpha is fog intensity
     //val fogColor = Color.valueOf("9CD2FF")
     val camControl: FirstPersonCameraController
@@ -38,7 +42,7 @@ class View {
         camera.near = 0.1f
         camera.far = 500f
         camControl = FirstPersonCameraController(camera)
-        camControl.setVelocity(30f)
+        camControl.setVelocity(FLYING_MAX_VELOCITY)
     }
 
     // begin debug section
@@ -81,6 +85,27 @@ class View {
 
     val debug = true
 
+    var fallSpeed = 0f
+
+    fun simulateWalking() {
+        if (!walkingEnabled) return
+        // some quick and dirty gravity
+        val pos = camera.position
+        //val elev = world.getElevation(pos.x, pos.z).toFloat() + 2f
+        val sz = 1f
+        val elev = world.getBoundingBoxElevation(pos.x - sz/2f, pos.z - sz/2f, sz, sz).toFloat() + 2f
+        val elevDiff = elev - pos.y
+        if (Math.abs(elevDiff) <= 0.1f) {
+            pos.y = elev
+            fallSpeed = 0f
+        } else if (elevDiff > 0) {
+            pos.y += 0.2f
+        } else {
+            fallSpeed += 0.01f
+            pos.y -= fallSpeed
+        }
+    }
+
     fun render(dt: Float) {
         gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
 
@@ -102,6 +127,7 @@ class View {
         gl.glCullFace(GL20.GL_BACK)
 
         //gl.glEnable(GL20.GL_TEXTURE_2D);
+        simulateWalking()
         camera.up.set(Vector3.Y)
         camera.update()
         lights.update(dt)

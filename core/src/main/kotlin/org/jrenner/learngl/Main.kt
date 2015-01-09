@@ -58,7 +58,9 @@ class Main : ApplicationAdapter() {
             resetViewRequested = false
             val pos = Vector3(view.camera.position)
             val direction = Vector3(view.camera.direction)
+            fonts.dispose()
             fonts = Fonts()
+            assets.load()
             view = View()
             hud = HUD()
             lights = Lights()

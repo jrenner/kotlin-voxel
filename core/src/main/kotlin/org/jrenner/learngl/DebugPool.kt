@@ -33,7 +33,9 @@ class DebugPool<T>(val name: String, val newObjFunc: () -> T, initialCapacity: I
 
     override fun obtain(): T {
         objectsObtained++
-        return super.obtain()
+        synchronized(this) {
+            return super.obtain()
+        }
     }
 
     override fun newObject(): T {
@@ -42,7 +44,9 @@ class DebugPool<T>(val name: String, val newObjFunc: () -> T, initialCapacity: I
     }
 
     override fun free(obj: T) {
-        super.free(obj)
+        synchronized(this) {
+            super.free(obj)
+        }
         objectsFreed++
     }
 
