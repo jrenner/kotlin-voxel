@@ -3,7 +3,7 @@ A voxel engine (like Minecraft) written in Kotlin
 
 ------
 
-This voxel engine was created as a programming exercise, with the goal of making a Minecraft-like voxel engine using the Kotlin programming language
+This voxel engine was created as a programming exercise. It was created with the Kotlin programming language and libgdx, a Java game library.
 
 ![screenshot](/voxel1.png)
 
