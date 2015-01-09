@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils
 import org.jrenner.learngl.world
 import org.jrenner.learngl.utils.threeIntegerHashCode
 import com.badlogic.gdx.utils.SnapshotArray
+import org.jrenner.learngl.utils.SimpleTimer
 
 class World(val width: Int, val height: Int, val depth: Int) {
     
@@ -136,19 +137,19 @@ class World(val width: Int, val height: Int, val depth: Int) {
         return chunk.dataGrid.getCubeAt(x, y, z)
     }
 
-    /*fun hasChunkAt(x: Float, y: Float, z: Float): Boolean {
+    fun hasChunkAt(x: Float, y: Float, z: Float): Boolean {
         val sx = snapToChunkOrigin(x).toInt()
         val sy = snapToChunkOrigin(y).toInt()
         val sz = snapToChunkOrigin(z).toInt()
         return chunkHashCodeMap.containsKey(threeIntegerHashCode(sx, sy, sz))
-        *//*for (i in 0..chunks.size - 1) {
+/*        for (i in 0..chunks.size - 1) {
             val chunk = chunks[i]
             if (chunk.dataGrid.hasCubeAt(x, y, z)) {
                 return true
             }
         }
-        return false*//*
-    }*/
+        return false*/
+    }
 
     fun addChunk(chunk: Chunk) {
         chunks.add(chunk)
@@ -168,8 +169,31 @@ class World(val width: Int, val height: Int, val depth: Int) {
         //throw GdxRuntimeException("no chunk contains cube at: $x, $y, $z")
     }
 
-    fun getElevationAt(x: Float, z: Float) {
+    //val elevTimer = SimpleTimer("Elevations")
 
+    // for finding elevation
+    private val verticalChunks = Arr<Chunk>()
+
+    fun getElevation(x: Float, z: Float): Int {
+        //elevTimer.start()
+        verticalChunks.clear()
+        var y = world.height.toFloat()
+        while(y >= 0f) {
+            if (hasChunkAt(x, y, z)) {
+                verticalChunks.add(getChunkAt(x, y, z))
+            }
+            y -= CubeDataGrid.height
+        }
+        var result = -1
+        for (chunk in verticalChunks) {
+            val elev = chunk.dataGrid.getElevation(x, z)
+            if (elev > -1) {
+                result = elev
+                break
+            }
+        }
+        //elevTimer.stop()
+        return result
     }
 
     /** should only be used by test package */

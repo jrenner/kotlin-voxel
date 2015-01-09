@@ -30,7 +30,7 @@ class HUD {
     var accumulatedTime = 0f
 
     fun isReadyForUpdate(): Boolean {
-        val interval = 0.25f
+        val interval = 0.1f
         if (accumulatedTime >= interval) {
             accumulatedTime -= interval
             return true
@@ -49,10 +49,11 @@ class HUD {
             sb + "\nChunkQueue: ${world.chunkCreationQueue.size}"
             val c = view.camera.position
             sb + "\nChunks, created: ${world.chunksCreated}, removed: ${world.chunksRemoved}"
-            sb + "\nCamera: %.1f, %.1f %.1f".format(c.x, c.y, c.z)
+            val camElev = world.getElevation(c.x, c.z)
+            sb + "\nCamera: %.1f, %.1f %.1f\n\tAltitude above ground: $camElev: $camElev".format(c.x, c.y, c.z)
             sb + "\nView Distance: ${View.maxViewDist}"
             sb + "\n\nControls:\n\tW, A, S, D to move\n\tClick and hold mouse to look around\n\t- and + to change view distance"
-            sb + "\nView distances over 160\nRequire LARGE amounts of RAM"
+            sb + "\nHigh view distances require\nexponentially large amounts of memory"
             info.setText(sb.toString())
         }
     }

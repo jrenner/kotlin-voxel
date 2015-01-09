@@ -13,6 +13,11 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.Model
 import org.jrenner.learngl.utils.r
 import org.jrenner.learngl.world
+import org.jrenner.learngl.TimedIntervalTask
+import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.math.Vector2
+import org.jrenner.learngl.lights
+import org.jrenner.learngl.utils.fmt
 
 class PointLight {
 
@@ -20,8 +25,8 @@ class PointLight {
     val color = Color(Color.WHITE)
     var intensity = 5.0f
 
-    val accel = 0.05f
-    val maxSpeed = r(0.2f, 0.5f)
+    val accel = 0.005f
+    val maxSpeed = 2.0f
     val velocity = Vector3()
 
     val debugModel: Model by Delegates.lazy {
@@ -37,7 +42,8 @@ class PointLight {
         ModelInstance(debugModel)
     }
 
-    var dest = Vector3()
+    var destX = 0f
+    var destZ = 0f
     ;{
         setNextDest()
     }
@@ -47,10 +53,9 @@ class PointLight {
     fun setNextDest() {
         //dest.set(xOffset, r(world.height.toFloat()), r(world.depth.toFloat()))
         val cam = view.camera.position
-        val limit = 40f
-        dest.y = cam.y + r(-2f, 2f)
-        dest.x = r(cam.x - limit, cam.x + limit)
-        dest.z = r(cam.z - limit, cam.z + limit)
+        val limit = 80f
+        destX = r(cam.x - limit, cam.x + limit)
+        destZ = r(cam.z - limit, cam.z + limit)
     }
 
     var posLoc = -1
@@ -60,8 +65,15 @@ class PointLight {
     var attachedToCamera = false
 
     val tmp = Vector3()
+    var elevation = 0f
+    var elevationOffset = r(5f, 20f)
 
-    fun update() {
+    val elevationUpdater = TimedIntervalTask(intervalSeconds = 0.25f) {
+        elevation = world.getElevation(pos.x, pos.z).toFloat()
+    }
+
+    fun update(dt: Float) {
+        elevationUpdater.update(dt)
         if (view.debug) {
             debugInstance.transform.setToTranslation(pos)
         }
@@ -69,15 +81,19 @@ class PointLight {
             pos.set(view.camera.position)
             return
         }
-        val diff = tmp.set(dest).sub(pos)
+        val diff = tmp.set(destX, 0f, destZ).sub(pos.x, 0f, pos.z)
         val dist = diff.len()
-        velocity.scl(0.9f)
-        if (dist < velocity.len() * 2f) {
+        velocity.y = 0f
+        if (dist < 1f) {
             setNextDest()
+            println("a")
         } else {
-            velocity.add(diff.nor().scl(accel)).clamp(0f, maxSpeed)
+            velocity.add(diff.nor().scl(accel))
+            //if (this == lights.pointLights[1]) println("c")
         }
-        pos.add(velocity)
+        velocity.scl(0.98f)
+        pos.add(velocity.x, 0f, velocity.z)
+        pos.y = MathUtils.lerp(pos.y, elevation + elevationOffset, 0.05f)
     }
 
     fun setUniforms() {

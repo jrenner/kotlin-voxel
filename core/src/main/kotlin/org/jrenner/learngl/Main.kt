@@ -49,8 +49,9 @@ class Main : ApplicationAdapter() {
     })
 
     override fun render() {
-/*        if (frame % 60 == 0L) {
-            println(DebugPool.allDebugInfo())
+        /*if (frame % 120 == 0L) {
+            //println(DebugPool.allDebugInfo())
+            //world.elevTimer.report()
         }*/
         FramePool.reset()
         if (resetViewRequested) {
@@ -76,7 +77,7 @@ class Main : ApplicationAdapter() {
         frame++
         profileGL()
         //fpsLogger.log()
-        view.render()
+        view.render(dt)
         hud.render(dt)
         gameInput.update(dt)
         /*if (frame % 120 == 0L) {

@@ -109,14 +109,13 @@ public class CubeDataGrid implements Iterable<CubeData> {
 		return total;
 	}
 
-	public int getChunkLocalElevation(float xf, float zf) {
-		int x = MathUtils.floor(xf);
-		int z = MathUtils.floor(zf);
-		int y;
-		for (y = height-1; y >= 0; y--) {
-			CubeData cube = getCubeAt(x, y, z);
+	public int getElevation(float xf, float zf) {
+		int worldX = MathUtils.floor(xf);
+		int worldZ = MathUtils.floor(zf);
+		for (int worldY = this.y + height-1; worldY >= this.y; worldY--) {
+			CubeData cube = getCubeAt(worldX, worldY, worldZ);
 			if (cube.getCubeType() != CubeTypes.Void) {
-				return y;
+				return worldY;
 			}
 		}
 		return -1;

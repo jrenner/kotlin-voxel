@@ -3,6 +3,7 @@ package org.jrenner.learngl.utils
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Frustum
+import com.badlogic.gdx.math.Vector2
 
 fun r(f: Float) = MathUtils.random(f)
 fun r(f1: Float, f2: Float) = MathUtils.random(f1, f2)

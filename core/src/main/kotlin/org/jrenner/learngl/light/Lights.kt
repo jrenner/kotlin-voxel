@@ -11,9 +11,9 @@ class Lights {
     val ambientLight = Color(uniformAmbient, uniformAmbient, uniformAmbient, 1.0f)
     var ambientLoc = -1
 
-    fun update() {
+    fun update(dt: Float) {
         for (pl in pointLights) {
-            pl.update()
+            pl.update(dt)
         }
     }
 

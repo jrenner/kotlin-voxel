@@ -12,9 +12,9 @@ import org.jrenner.learngl
 }*/
 
 object CubeTypes {
-    val Grass: Byte = 0
-    val Water: Byte = 1
-    val Void: Byte = 2
+    val Void: Byte = 0
+    val Grass: Byte = 1
+    val Water: Byte = 2
 }
 
 

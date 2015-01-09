@@ -24,7 +24,7 @@ class View {
     class object {
         var maxViewDist = 100f
             set(d) {
-                $maxViewDist = MathUtils.clamp(d, 20f, 240f)
+                $maxViewDist = MathUtils.clamp(d, 20f, 400f)
             }
 
     }
@@ -81,7 +81,7 @@ class View {
 
     val debug = true
 
-    fun render() {
+    fun render(dt: Float) {
         gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
 
         if(debug) {
@@ -104,7 +104,7 @@ class View {
         //gl.glEnable(GL20.GL_TEXTURE_2D);
         camera.up.set(Vector3.Y)
         camera.update()
-        lights.update()
+        lights.update(dt)
 
         draw()
 

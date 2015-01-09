@@ -147,7 +147,7 @@ class CubeDataGridTest {
             }
         }
         fun CubeDataGrid.test(x: Float, z: Float, expected: Int) {
-            assertEquals(expected, this.getChunkLocalElevation(x, z))
+            assertEquals(expected, this.getElevation(x, z))
         }
         val sz = world.Chunk.chunkSize
         println("chunk size: $sz")
