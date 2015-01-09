@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.Matrix4
 import org.jrenner.learngl.cube.CubeDataGrid
 import com.badlogic.gdx.math.MathUtils
 import org.jrenner.learngl.gameworld.Chunk
+import com.badlogic.gdx.math.Frustum
 
 class View {
     class object {
@@ -111,6 +112,15 @@ class View {
         gl.glDisable(GL20.GL_DEPTH_TEST)
         gl.glDisable(GL20.GL_CULL_FACE)
 
+        // we don't need this to be exact, let's optimize
+        if (frame % 5 == 0L) {
+            synchronized(world) {
+                world.updater?.tempCamPos?.set(camera.position)
+                world.updater?.tempFrustum?.update(camera.invProjectionView)
+                world.updater?.maxDist = View.maxViewDist
+            }
+        }
+
 
     }
 
@@ -133,7 +143,7 @@ class View {
             //assets.grassTexture.bind()
             chunksRendered = 0
             for (chunk in world.chunks) {
-                if (chunk.chunkMesh.vertexCount != 0 && chunk.inFrustrum()) {
+                if (chunk.chunkMesh.vertexCount != 0 && chunk.inFrustum()) {
                     chunksRendered++
                     chunk.chunkMesh.mesh.render(shader, GL20.GL_TRIANGLES, 0, chunk.chunkMesh.vertexCount)
                 }
@@ -215,10 +225,10 @@ class View {
         shapes.end()
     }
 
-    fun inFrustrum(x: Float, y: Float, z: Float, bboxRadius: Float): Boolean {
+    fun inFrustum(x: Float, y: Float, z: Float, bboxRadius: Float, frustum: Frustum): Boolean {
         val w = bboxRadius
         val h = bboxRadius
         val d = bboxRadius
-        return view.camera.frustum.boundsInFrustum(x, y, z, w, h, d)
+        return frustum.boundsInFrustum(x, y, z, w, h, d)
     }
 }

@@ -18,9 +18,19 @@ public class CubeDataGrid implements Iterable<CubeData> {
 	public boolean dirty = true;
 	public int numElements;
 	public CubeData[][][] grid = new CubeData[chunkSize][chunkSize][chunkSize];
+
+	/** the world coordinates projection of local coords (0f,0f,0f)
+	 * i.e. the 'left', 'bottom', 'front' corner of the box in world space */
 	public Vector3 origin = new Vector3();
+
+	/** center of the box the CDG represents in world coordinates */
 	public Vector3 center = new Vector3();
-	public Vector3 boundary = new Vector3();
+
+	/** (width, height, depth) of the box in woorld coords
+	 * i.e. the 'right', 'top', 'back' corner of the box in world space */
+ 	public Vector3 boundary = new Vector3();
+
+	// cache int values of the origin, probably pre-mature optimization
 	public int x, y, z;
 
 	public CubeDataGrid() {

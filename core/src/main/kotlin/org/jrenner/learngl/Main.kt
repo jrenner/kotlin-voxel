@@ -19,7 +19,7 @@ import org.jrenner.learngl.gameworld.World
 
 class Main : ApplicationAdapter() {
     class object {
-        public val mainWorld: World get() = world // for Java interop
+        public val mainWorld: World get() = world // for easier Java interop
         public val mainChunkPool: DebugPool<Chunk> get() = chunkPool
         public val mainCDGPool: DebugPool<CubeDataGrid> get() = cdgPool
 
@@ -50,9 +50,7 @@ class Main : ApplicationAdapter() {
 
     override fun render() {
 /*        if (frame % 60 == 0L) {
-            println("[Chunk Pool]: ${chunkPool.debugInfo()}")
-            println("---------------------------")
-            println("[CDG Pool]: ${cdgPool.debugInfo()}\n")
+            println(DebugPool.allDebugInfo())
         }*/
         FramePool.reset()
         if (resetViewRequested) {
@@ -134,8 +132,8 @@ var lastSecond = 0f
 var hiddenFacesEnabled = true
 
 val initialChunkPoolSize = 2048
-val chunkPool = DebugPool({ Chunk() },  initialChunkPoolSize)
-val cdgPool = DebugPool({ CubeDataGrid() }, initialChunkPoolSize)
+val chunkPool = DebugPool("Chunk", { Chunk() },  initialChunkPoolSize)
+val cdgPool = DebugPool("CDG", { CubeDataGrid() }, initialChunkPoolSize)
 
 fun rand(f: Float): Float {
     return MathUtils.random(f)

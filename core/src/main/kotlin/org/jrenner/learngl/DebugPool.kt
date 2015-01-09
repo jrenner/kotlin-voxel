@@ -3,8 +3,27 @@ package org.jrenner.learngl
 import com.badlogic.gdx.utils.Pool
 import com.badlogic.gdx.utils.GdxRuntimeException
 import com.badlogic.gdx.utils.Array as Arr
+import com.badlogic.gdx.utils.StringBuilder
+import kotlin.properties.Delegates
 
-class DebugPool<T>(val newObjFunc: () -> T, initialCapacity: Int = 16) : Pool<T>(initialCapacity) {
+class DebugPool<T>(val name: String, val newObjFunc: () -> T, initialCapacity: Int = 16) : Pool<T>(initialCapacity) {
+    class object {
+        val list = Arr<DebugPool<*>>()
+        val sb : StringBuilder by Delegates.lazy {
+            StringBuilder()
+        }
+        fun allDebugInfo(): String {
+            sb.delete(0, sb.length())
+            for (pool in list) {
+                sb.append(pool.debugInfo()).append("\n")
+            }
+            return sb.toString()
+        }
+
+    }
+    {
+        list.add(this)
+    }
     var objectsCreated = 0
         private set
 
@@ -32,7 +51,7 @@ class DebugPool<T>(val newObjFunc: () -> T, initialCapacity: Int = 16) : Pool<T>
     }
 
     fun debugInfo(): String {
-        return "created: $objectsCreated, obtained: $objectsObtained, freed: $objectsFreed, currently free: ${getFree()}"
+        return "[DebugPool: $name] created: $objectsCreated, obtained: $objectsObtained, freed: $objectsFreed, currently free: ${getFree()}"
     }
 }
 

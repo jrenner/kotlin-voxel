@@ -41,7 +41,7 @@ class Chunk() {
 
 
 
-    fun inFrustrum(): Boolean {
+    fun inFrustum(): Boolean {
         val x = dataGrid.center.x
         val y = dataGrid.center.y
         val z = dataGrid.center.z

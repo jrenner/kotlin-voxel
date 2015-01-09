@@ -16,6 +16,7 @@ import org.jrenner.learngl.SimplexNoise
 import com.badlogic.gdx.utils
 import org.jrenner.learngl.world
 import org.jrenner.learngl.utils.threeIntegerHashCode
+import com.badlogic.gdx.utils.SnapshotArray
 
 class World(val width: Int, val height: Int, val depth: Int) {
     
@@ -34,9 +35,9 @@ class World(val width: Int, val height: Int, val depth: Int) {
     val numChunksX = chunkCount(width)
     val numChunksY = chunkCount(height)
     val numChunksZ = chunkCount(depth)
-    /** map of hashCodes to Chunks */
+    /** Array of existing chunks for fast iteration */
     val chunks = DelayedRemovalArray<Chunk>(200)
-    /** map of chunk hashCodes to Chunks for checking chunk existence */
+    /** map of chunk hashCodes to Chunks, mostly for fast checking of chunk existence in the world*/
     val chunkHashCodeMap = ObjectMap<Int, Chunk>(200)
     /** keeps track of which chunks are queued for creation */
     val chunkCreationQueue = ObjectSet<CubeDataGrid>()
@@ -54,32 +55,34 @@ class World(val width: Int, val height: Int, val depth: Int) {
     }
 
     fun removeChunksOutOfViewRange() {
-        chunks.begin()
-        for (i in 0..chunks.size - 1) {
-            val chunk = chunks[i]
-            val dist2 = chunk.dataGrid.center.dst2(learngl.view.camera.position)
-            if (dist2 > View.maxViewDist * View.maxViewDist) {
-                val hash: Int = chunk.hashCode()
-                chunks.removeIndex(i)
-                chunkHashCodeMap.remove(hash)
-                chunk.dispose()
-                chunksRemoved++
+        synchronized(this) {
+            chunks.begin()
+            for (i in 0..chunks.size - 1) {
+                val chunk = chunks[i]
+                val dist2 = chunk.dataGrid.center.dst2(learngl.view.camera.position)
+                if (dist2 > View.maxViewDist * View.maxViewDist) {
+                    val hash: Int = chunk.hashCode()
+                    chunks.removeIndex(i)
+                    chunkHashCodeMap.remove(hash)
+                    chunk.dispose()
+                    chunksRemoved++
+                }
             }
+            chunks.end()
         }
-        chunks.end()
     }
 
     //var updatedOnce = false
 
     fun update(dt: Float) {
         initUpdater()
+        // the bigger the backlog, the harder we work to catch up
         val chunksPerFrame = 1 + chunkCreationQueue.size / 10
         for (n in 1..chunksPerFrame) {
             processCreationQueue()
         }
-        if (learngl.frame % 60 == 0L) {
+        if (learngl.frame % 30 == 0L) {
             removeChunksOutOfViewRange()
-            //createChunksInViewRange() // now handle by WorldUpdater on its own thread
         }
         for (chunk in chunks) {
             chunk.update()
@@ -96,12 +99,14 @@ class World(val width: Int, val height: Int, val depth: Int) {
         }
     }
 
+    /** @see CubeDataGrid.origin */
     fun snapToChunkOrigin(value: Float): Float {
         //val centerOffset = Chunk.chunkSize / 2f
         val div = MathUtils.floor(value) / Chunk.chunkSize
         return (div * Chunk.chunkSize).toFloat()
     }
 
+    /** @see CubeDataGrid.center */
     fun snapToChunkCenter(value: Float): Float {
         return snapToChunkOrigin(value) + Chunk.chunkSize / 2
     }

@@ -7,45 +7,87 @@ import org.jrenner.learngl.cube.CubeDataGrid
 import org.jrenner.learngl
 import com.badlogic.gdx.utils
 import org.jrenner.learngl.View
+import com.badlogic.gdx.utils.ObjectSet
+import org.jrenner.learngl.utils.threeIntegerHashCode
+import org.jrenner.learngl.view
+import com.badlogic.gdx.math.Frustum
+import com.badlogic.gdx.utils.Pools
+import java.util.Comparator
+import org.jrenner.learngl.DebugPool
 
 /** updates chunks in the world on a separate Thread */
 class WorldUpdater(val wor: World): Runnable {
 
     /** hold here to pass to world thread when finished updating */
-    val tempCreationQueue = utils.Array<CubeDataGrid>()
+    val tempCreationQueue = Arr<CubeDataGrid>()
+    /** this temporarily stores data from the World's map of chunk hash codes -> chunks
+     * for thread safety.
+     * It is used to check if the chunks is either already created
+     * or already queued for creation
+     * the world updater
+     */
+    val tempChunkHashCodeSet = ObjectSet<Int>()
+    val tempChunks = Arr<Chunk>()
+
+    /** camPos and frustum will be set by the View in View.render */
+    val tempCamPos = Vector3()
+    val tempFrustum = Frustum()
+
+    val updateIntervalMillis = 250L
+    var maxDist = View.maxViewDist
+    val queueLimit = 10
+    var worldQueueSize = 0
 
     override fun run() {
         try {
             while (true) {
-                reset()
-                createChunksInViewRange()
-                communicateUpdateToWorld()
-                Thread.sleep(500)
+                synchronized(wor) {
+                    retrieveDataFromWorld()
+                    createChunksInViewRange()
+                    communicateUpdateToWorld()
+                }
+                Thread.sleep(updateIntervalMillis)
             }
         } catch (e: Exception) {
-            println("Error in world updter thread:\n")
+            // if we have failed at thread-safety, just crash with a message
+            println("ERROR in WorldUpdater thread:\n")
             e.printStackTrace()
             System.exit(1)
         }
     }
 
-    fun communicateUpdateToWorld() {
-        synchronized(wor) {
-            wor.processUpdateFromWorldUpdater(this)
+    fun retrieveDataFromWorld() {
+        tempChunkHashCodeSet.clear()
+        for (item in wor.chunkHashCodeMap.keys()) {
+            tempChunkHashCodeSet.add(item)
         }
+        for (item in wor.chunkCreationQueue) {
+            val hash = item.hashCode()
+            tempChunkHashCodeSet.add(hash)
+        }
+        worldQueueSize = wor.chunkCreationQueue.size
     }
 
-    fun reset() {
+
+    fun communicateUpdateToWorld() {
+        wor.processUpdateFromWorldUpdater(this)
         tempCreationQueue.clear()
     }
 
+    /** see: World.hasChunkAt */
+    fun worldUpdaterHasChunkAt(x: Float, y: Float, z: Float): Boolean {
+        val sx = wor.snapToChunkOrigin(x).toInt()
+        val sy = wor.snapToChunkOrigin(y).toInt()
+        val sz = wor.snapToChunkOrigin(z).toInt()
+        return tempChunkHashCodeSet.contains(threeIntegerHashCode(sx, sy, sz))
+    }
 
     fun createChunksInViewRange() {
+        if (worldQueueSize > queueLimit) return
         /*if (chunkCreationQueue.size >= queueSizeLimit) {
             return
         }*/
-        val maxDist = View.maxViewDist
-        val camPos = learngl.view.camera.position
+        val camPos = tempCamPos
         val loX = MathUtils.clamp(camPos.x - maxDist, 0f, learngl.world.width.toFloat());
         val loY = MathUtils.clamp(camPos.y - maxDist, 0f, learngl.world.height.toFloat());
         val loZ = MathUtils.clamp(camPos.z - maxDist, 0f, learngl.world.depth.toFloat());
@@ -59,35 +101,20 @@ class WorldUpdater(val wor: World): Runnable {
             val chunkY = wor.snapToChunkCenter(y)
             val chunkZ = wor.snapToChunkCenter(z)
             // does this chunk already exist?
-            val hasChunk = wor.hasChunkAt(chunkX, chunkY, chunkZ)
+            val hasChunk = worldUpdaterHasChunkAt(chunkX, chunkY, chunkZ)
             // lazily create chunks only when the camera looks at them
-            if (!hasChunk && learngl.view.inFrustrum(chunkX, chunkY, chunkZ, Chunk.chunkSizef)) {
+            val inView = view.inFrustum(chunkX, chunkY, chunkZ, Chunk.chunkSizef, tempFrustum)
+            if (!hasChunk && inView) {
                 val dist2 = camPos.dst2(chunkX, chunkY, chunkZ)
                 // IN RANGE
                 if (dist2 <= maxDist * maxDist) {
-                    if (hasChunk) {
-                        // do nothing
-                    } else {
-                        val origin = Vector3(wor.snapToChunkOrigin(x), wor.snapToChunkOrigin(y), wor.snapToChunkOrigin(z))
-                        val cdg = wor.worldData.getCDGByWorldPos(origin.x, origin.y, origin.z)
-                        //println("WORLD UPDATER: added to temp queue (${origin.x}, ${origin.y}, ${origin.z})")
-                        tempCreationQueue.add(cdg)
-                    }
+                    val origin = Vector3(wor.snapToChunkOrigin(x), wor.snapToChunkOrigin(y), wor.snapToChunkOrigin(z))
+                    val cdg = wor.worldData.getCDGByWorldPos(origin.x, origin.y, origin.z)
+                    //println("WORLD UPDATER: added to temp queue (${origin.x}, ${origin.y}, ${origin.z})")
+                    tempCreationQueue.add(cdg)
                 }
             }
         }
-
-        /*
-            Original code used for iteration:
-            for (x in loX..hiX step sz) {
-                for (y in loY..hiY step sz) {
-                    for (z in loZ..hiZ step sz) {
-                        ...
-
-            Kotlin converts the floats into Float objects in order to use Float method invocations
-            Current iteration method avoids object allocation (GC optimization)
-
-         */
         var x = loX
         var y: Float
         var z: Float
@@ -96,10 +123,6 @@ class WorldUpdater(val wor: World): Runnable {
             while(y <= hiY) {
                 z = loZ
                 while (z <= hiZ) {
-                    // at each iteration we abandon if the queue is already over the limit
-                    /*                if (chunkCreationQueue.size >= queueSizeLimit) {
-                                        return
-                                    }*/
                     createChunkIfNeeded(x, y, z)
                     z +=sz
                 }
@@ -107,5 +130,14 @@ class WorldUpdater(val wor: World): Runnable {
             }
             x += sz
         }
+        /*
+            Original code used for iteration:
+            for (x in loX..hiX step sz) {
+                for (y in loY..hiY step sz) {
+                    for (z in loZ..hiZ step sz) {
+                        ...
+            Kotlin converts the float primitives into boxed Float objects in order to use Float method invocations
+            Current iteration method avoids object allocation (GC optimization)
+         */
     }
 }
