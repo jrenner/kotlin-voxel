@@ -33,8 +33,11 @@ class GameInput {
         camControl.update(dt)
     }
 
+
     fun createMainProcessor(): InputAdapter {
         return object : InputAdapter() {
+
+            val viewDistChangeDelta: Float get() = if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) 100f else 10f
 
             override fun keyDown(keycode: Int): Boolean {
                 when (keycode) {
@@ -51,11 +54,12 @@ class GameInput {
                         println("hideFaces: $org.jrenner.learngl.hiddenFacesEnabled")
                     }*/
                     Keys.PLUS -> {
-                        View.maxViewDist += 10f
+                        View.maxViewDist += viewDistChangeDelta
                         println("MAX VIEW DIST: ${View.maxViewDist}")
                     }
                     Keys.MINUS -> {
-                        View.maxViewDist -= 10f
+
+                        View.maxViewDist -= viewDistChangeDelta
                         println("MAX VIEW DIST: ${View.maxViewDist}")
                     }
                     Keys.SPACE -> {

@@ -85,6 +85,7 @@ class Main : ApplicationAdapter() {
         /*if (frame % 120 == 0L) {
             resetViewRequested = true
         }*/
+        Physics.update()
     }
 
     var profileRequested = false

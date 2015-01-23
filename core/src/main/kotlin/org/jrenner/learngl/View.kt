@@ -23,9 +23,9 @@ import org.jrenner.learngl.gameworld.World
 
 class View {
     class object {
-        var maxViewDist = 120f
+        var maxViewDist = 200f
             set(d) {
-                $maxViewDist = MathUtils.clamp(d, 20f, 600f)
+                $maxViewDist = MathUtils.clamp(d, 20f, 1000f)
             }
         val WALKING_MAX_VELOCITY = 5f
         val FLYING_MAX_VELOCITY = 30f
@@ -40,7 +40,7 @@ class View {
     {
         gl.glClearColor(fogColor.r, fogColor.g, fogColor.b, 1.0f)
         camera.near = 0.1f
-        camera.far = 500f
+        camera.far = 1500f
         camControl = FirstPersonCameraController(camera)
         camControl.setVelocity(FLYING_MAX_VELOCITY)
     }
@@ -54,6 +54,7 @@ class View {
     val shapes = ShapeRenderer()
 
     val shader: ShaderProgram
+    val normalMatrixLocation: Int
     val projTransLocation: Int
     val diffuseTextureLocation: Int
     val diffuseUVLocation: Int
@@ -74,6 +75,7 @@ class View {
         }
         val loc = { (name: String) -> shader.getUniformLocation(name) }
         projTransLocation = loc("u_projTrans")
+        normalMatrixLocation = loc("u_normalMatrix")
         diffuseTextureLocation = loc("u_diffuseTexture")
         diffuseUVLocation = loc("u_diffuseUV")
         maxViewDistLocation = loc("u_maxViewDist")
@@ -147,10 +149,18 @@ class View {
             }
         }
 
+        /*shapes.begin(ShapeType.Line)
+        shapes.setColor(Color.RED)
+        println("ray: ${Physics.rayStart} ------ ${Physics.rayEnd}")
+        shapes.line(Physics.rayStart, Physics.rayEnd)
+        shapes.end()*/
+
 
     }
 
     var chunksRendered = 0
+
+    val normalMatrix = Matrix4()
 
     fun draw() {
         try {
@@ -159,6 +169,9 @@ class View {
             //assets.grassTexture.bind()
             assets.dirtTexture.bind()
             shader.setUniformMatrix(projTransLocation, camera.combined)
+            //shader.setUniformMatrix(viewMatrixLocation, camera.view)
+            normalMatrix.set(camera.combined.inv().tra())
+            shader.setUniformMatrix(normalMatrixLocation, normalMatrix)
             shader.setUniformi(diffuseTextureLocation, 0)
             // subtract by chunkSize to hide popping in/out of chunks
             shader.setUniformf(maxViewDistLocation, maxViewDist - Chunk.chunkSize)
@@ -184,7 +197,7 @@ class View {
             return
         }
 
-        drawXYZCoords()
+        //drawXYZCoords()
         drawFrameTimes()
     }
 

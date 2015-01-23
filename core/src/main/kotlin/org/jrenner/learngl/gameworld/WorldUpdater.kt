@@ -36,7 +36,7 @@ class WorldUpdater(val wor: World): Runnable {
 
     val updateIntervalMillis = 250L
     var maxDist = View.maxViewDist
-    val queueLimit = 100
+    val queueLimit = 10
     var worldQueueSize = 0
 
     override fun run() {
