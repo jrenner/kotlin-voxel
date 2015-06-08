@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.StringBuilder
 import kotlin.properties.Delegates
 
 class DebugPool<T>(val name: String, val newObjFunc: () -> T, initialCapacity: Int = 16) : Pool<T>(initialCapacity) {
-    class object {
+    companion object {
         val list = Arr<DebugPool<*>>()
         val sb : StringBuilder by Delegates.lazy {
             StringBuilder()
@@ -21,7 +21,7 @@ class DebugPool<T>(val name: String, val newObjFunc: () -> T, initialCapacity: I
         }
 
     }
-    {
+    init {
         list.add(this)
     }
     var objectsCreated = 0

@@ -9,9 +9,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 class Fonts {
 
     var normal: BitmapFont by Delegates.notNull()
-    ;
 
-    {
+    init {
         val gen = SmartFontGenerator()
         val fileHandle = Gdx.files.local("fonts/Exo-Regular.otf")
         val size: Int = 18

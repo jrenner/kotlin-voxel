@@ -4,7 +4,6 @@ import org.jrenner.learngl.view
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.GdxRuntimeException
 import org.jrenner.learngl.utils.randomizeColor
-import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 
 class Lights {
     val pointLights = Arr<PointLight>()
@@ -45,7 +44,7 @@ class Lights {
     }
 
     // CREATE LIGHTS
-    {
+    init {
         val camLight = PointLight()
         pointLights.add(camLight)
         //pl.pos.set(0f, 0f, 0f)
@@ -54,7 +53,7 @@ class Lights {
 
         val intensity = 0.15f
         dirLight.color.set(intensity, intensity, intensity, 1.0f)
-        dirLight.direction.set(-0.4f, -0.7f, -0.4f).nor()
+        dirLight.direction.set(-.5f, -1f, -.5f).nor()
 
         for (n in 1..10) {
             val pl = PointLight()

@@ -3,9 +3,9 @@ package org.jrenner.learngl
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.utils.Align
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.StringBuilder
 import org.jrenner.learngl.utils.plus
 
@@ -13,8 +13,8 @@ class HUD {
     val stage = Stage()
     val table = Table()
     val info: Label = Label("Info", skin)
-    ;
-    {
+
+    init {
         refresh()
     }
 

@@ -16,8 +16,8 @@ class GameInput {
     val multi = InputMultiplexer()
     var proc: InputAdapter by Delegates.notNull()
     val camControl: FirstPersonCameraController get() = learngl.view.camControl
-    ;
-    {
+
+    init {
         proc = createMainProcessor()
         resetProcessors()
     }

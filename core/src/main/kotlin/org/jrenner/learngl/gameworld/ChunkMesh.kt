@@ -12,7 +12,7 @@ import org.jrenner.learngl.Direction
 import org.jrenner.learngl
 
 class ChunkMesh() {
-    class object {
+    companion object {
         private val cubeRectData = RectData()
 
         private val POSITION_COMPONENTS = 3

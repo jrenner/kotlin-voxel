@@ -44,7 +44,7 @@ class PointLight {
 
     var destX = 0f
     var destZ = 0f
-    ;{
+    init {
         setNextDest()
     }
 

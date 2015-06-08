@@ -22,7 +22,7 @@ import com.badlogic.gdx.math.Frustum
 import org.jrenner.learngl.gameworld.World
 
 class View {
-    class object {
+    companion object {
         var maxViewDist = 200f
             set(d) {
                 $maxViewDist = MathUtils.clamp(d, 20f, 1000f)
@@ -37,7 +37,7 @@ class View {
     val fogColor = Color(0.4f, 0.4f, 0.45f, 1.0f) // alpha is fog intensity
     //val fogColor = Color.valueOf("9CD2FF")
     val camControl: FirstPersonCameraController
-    {
+    init {
         gl.glClearColor(fogColor.r, fogColor.g, fogColor.b, 1.0f)
         camera.near = 0.1f
         camera.far = 1500f
@@ -61,8 +61,8 @@ class View {
     val maxViewDistLocation: Int
     val camPosLocation: Int
     val fogColorLocation: Int
-    {
-        val getShader = { (path: String) -> Gdx.files.local(path)!! }
+    init {
+        val getShader = { path: String -> Gdx.files.local(path)!! }
         val vert = getShader("shader/custom.vertex.glsl")
         val frag = getShader("shader/custom.fragment.glsl")
         shader = ShaderProgram(vert, frag)
@@ -73,7 +73,7 @@ class View {
         } else {
             println("SHADER COMPILED OK:\n$log")
         }
-        val loc = { (name: String) -> shader.getUniformLocation(name) }
+        val loc = { name: String -> shader.getUniformLocation(name) }
         projTransLocation = loc("u_projTrans")
         normalMatrixLocation = loc("u_normalMatrix")
         diffuseTextureLocation = loc("u_diffuseTexture")
@@ -236,8 +236,8 @@ class View {
 
     }
 
-    val mtx = Matrix4();
-    {
+    val mtx = Matrix4()
+    init {
         mtx.setToOrtho2D(0f, 0f, screenWidth.toFloat(), screenHeight.toFloat())
     }
 

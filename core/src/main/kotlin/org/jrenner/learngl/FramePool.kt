@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Array as Arr
  * into the pool
  */
 abstract class FramePool<T>() {
-    class object {
+    companion object {
         val framePools = Arr<FramePool<Any?>>()
         fun reset() {
             for (fp in framePools) {

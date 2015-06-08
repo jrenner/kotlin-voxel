@@ -18,7 +18,7 @@ import org.jrenner.learngl.input.GameInput
 import org.jrenner.learngl.gameworld.World
 
 class Main : ApplicationAdapter() {
-    class object {
+    companion object {
         public val mainWorld: World get() = world // for easier Java interop
         public val mainChunkPool: DebugPool<Chunk> get() = chunkPool
         public val mainCDGPool: DebugPool<CubeDataGrid> get() = cdgPool

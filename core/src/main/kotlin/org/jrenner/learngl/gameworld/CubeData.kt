@@ -19,7 +19,7 @@ object CubeTypes {
 
 
 class CubeData {
-    class object {
+    companion object {
         private val tmp = Vector3()
     }
     public val xf: Float get() = x.toFloat()

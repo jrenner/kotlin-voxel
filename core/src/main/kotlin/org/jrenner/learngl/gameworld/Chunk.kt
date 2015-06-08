@@ -6,7 +6,7 @@ import org.jrenner.learngl.utils.refresh
 import org.jrenner.learngl
 
 class Chunk() {
-    class object {
+    companion object {
         var chunkSize = 16
         var chunkSizef = chunkSize.toFloat()
         val maxIndex = chunkSize - 1

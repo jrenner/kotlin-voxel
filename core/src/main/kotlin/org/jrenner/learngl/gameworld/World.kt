@@ -251,10 +251,12 @@ class World(val width: Int, val height: Int, val depth: Int) {
 
     object NoiseLayerManager {
         val allLayers = utils.Array<NoiseLayer>()
+
         fun addLayer(freq: Float, weight: Float) {
             allLayers.add(NoiseLayer(freq, weight))
         }
-        {
+
+        init {
             addLayer(0.003f, 1.0f)
             addLayer(0.01f, 0.2f)
             addLayer(0.03f, 0.1f)
