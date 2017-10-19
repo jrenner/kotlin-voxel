@@ -3,7 +3,8 @@ package org.jrenner.learngl.gameworld
 import kotlin.properties.Delegates
 import org.jrenner.learngl.cube.CubeDataGrid
 import org.jrenner.learngl.utils.refresh
-import org.jrenner.learngl
+import org.jrenner.learngl.chunkPool
+import org.jrenner.learngl.view
 
 class Chunk() {
     companion object {
@@ -12,7 +13,7 @@ class Chunk() {
         val maxIndex = chunkSize - 1
         fun obtain(cdg: CubeDataGrid): Chunk {
             //val chunk = Pools.obtain(javaClass<Chunk>())
-            val chunk = learngl.chunkPool.obtain()
+            val chunk = chunkPool.obtain()
             chunk.dataGrid = cdg
             chunk.dirty = true
             /*val p = Pools.get(javaClass<Chunk>())
@@ -28,7 +29,7 @@ class Chunk() {
 
     var dataGrid: CubeDataGrid by Delegates.notNull()
 
-    val chunkMesh: ChunkMesh by Delegates.lazy {
+    val chunkMesh: ChunkMesh by lazy {
         ChunkMesh()
     }
 
@@ -48,7 +49,7 @@ class Chunk() {
         val w = CubeDataGrid.width
         val h = CubeDataGrid.height
         val d = CubeDataGrid.depth
-        return learngl.view.camera.frustum.boundsInFrustum(x, y, z, w/2f, h/2f, d/2f)
+        return view.camera.frustum.boundsInFrustum(x, y, z, w/2f, h/2f, d/2f)
     }
 
     fun refresh() {
@@ -62,7 +63,7 @@ class Chunk() {
         dataGrid.free()
         //chunkMesh.dispose()
         //Pools.free(this)
-        learngl.chunkPool.free(this)
+        chunkPool.free(this)
     }
 
     override fun hashCode(): Int {

@@ -4,16 +4,17 @@ import com.badlogic.gdx.utils.Pool
 import com.badlogic.gdx.utils.GdxRuntimeException
 import com.badlogic.gdx.utils.Array as Arr
 import com.badlogic.gdx.utils.StringBuilder
+import org.jrenner.RenStringBuilder
 import kotlin.properties.Delegates
 
 class DebugPool<T>(val name: String, val newObjFunc: () -> T, initialCapacity: Int = 16) : Pool<T>(initialCapacity) {
     companion object {
         val list = Arr<DebugPool<*>>()
-        val sb : StringBuilder by Delegates.lazy {
-            StringBuilder()
+        val sb : RenStringBuilder by lazy {
+            RenStringBuilder()
         }
         fun allDebugInfo(): String {
-            sb.delete(0, sb.length())
+            sb.delete(0, sb.sbLength())
             for (pool in list) {
                 sb.append(pool.debugInfo()).append("\n")
             }

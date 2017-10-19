@@ -5,6 +5,8 @@ import org.jrenner.learngl.Main;
 import org.jrenner.learngl.gameworld.Chunk;
 import org.jrenner.learngl.gameworld.World;
 
+import static org.jrenner.learngl.MainKt.getWorld;
+
 /** a 3d array of the all chunks in the game */
 public class WorldChunkData {
 	public int width, height, depth;
@@ -34,7 +36,7 @@ public class WorldChunkData {
 	 * https://youtrack.jetbrains.com/issue/KT-6586
 	 */
 	private int chunkSize() {
-		return Chunk.OBJECT$.getChunkSize();
+		return Chunk.Companion.getChunkSize();
 	}
 
 	private static Vector3 tmp = new Vector3();
@@ -49,7 +51,7 @@ public class WorldChunkData {
 		origin.scl(sz);
 		//System.out.println("make cdg at origin: " + origin + ", size: " + sz);
 		CubeDataGrid cdg = CubeDataGrid.create(origin.x, origin.y, origin.z);
-		Main.OBJECT$.getMainWorld().applyWorldData(cdg, org.jrenner.learngl.LearnglPackage.getWorld());
+		Main.Companion.getMainWorld().applyWorldData(cdg, getWorld());
 		cdg.dirty = true;
 		return cdg;
 	}

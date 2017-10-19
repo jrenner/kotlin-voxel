@@ -147,14 +147,14 @@ fun randColor(): Color {
     return Color(rand(1f), rand(1f), rand(1f), 1f)
 }
 
-val frameTimes : FloatArray by Delegates.lazy { FloatArray(screenHeight) }
+val frameTimes : FloatArray by lazy { FloatArray(screenHeight) }
 var frameTimeIdx: Int = 0
     get() {
-        if ($frameTimeIdx >= frameTimes.size()) {
-            $frameTimeIdx = 0
-            for (i in 0..frameTimes.size() - 1) {
+        if (field >= frameTimes.size) {
+            field = 0
+            for (i in 0..frameTimes.size - 1) {
                 frameTimes[i] = 0f
             }
         }
-        return $frameTimeIdx
+        return field
     }

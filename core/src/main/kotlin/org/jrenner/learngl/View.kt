@@ -25,7 +25,7 @@ class View {
     companion object {
         var maxViewDist = 200f
             set(d) {
-                $maxViewDist = MathUtils.clamp(d, 20f, 1000f)
+                field = MathUtils.clamp(d, 20f, 1000f)
             }
         val WALKING_MAX_VELOCITY = 5f
         val FLYING_MAX_VELOCITY = 30f
@@ -46,7 +46,7 @@ class View {
     }
 
     // begin debug section
-    val modelBatch: ModelBatch by Delegates.lazy {
+    val modelBatch: ModelBatch by lazy {
         ModelBatch()
     }
     // end debug
@@ -250,7 +250,7 @@ class View {
         val verySlow = 1 / 30f
         val tooSlow = 1 / 10f
 
-        for (i in 0..frameTimes.size() - 1) {
+        for (i in 0..frameTimes.size - 1) {
             val time = frameTimes[i]
             val col = when {
                 time >= tooSlow -> Color.RED

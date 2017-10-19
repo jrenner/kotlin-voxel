@@ -40,7 +40,7 @@ public class DesktopLauncher {
 				System.out.println("VIEW DIST CANNOT BE OVER " + max);
 				System.exit(0);
 			} else {
-				View.OBJECT$.setMaxViewDist(viewDist);
+				View.Companion.setMaxViewDist(viewDist);
 				System.out.println("COMMAND LINE ARG VIEW DIST SET: " + viewDist);
 			}
 

@@ -5,17 +5,16 @@ import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
 import kotlin.properties.Delegates
-import org.jrenner.learngl
-import com.badlogic.gdx.Input
 import org.jrenner.learngl.View
 import com.badlogic.gdx.Input.Keys
+import org.jrenner.learngl.main
 import org.jrenner.learngl.view
 
 class GameInput {
     val input = Gdx.input!!
     val multi = InputMultiplexer()
     var proc: InputAdapter by Delegates.notNull()
-    val camControl: FirstPersonCameraController get() = learngl.view.camControl
+    val camControl: FirstPersonCameraController get() = view.camControl
 
     init {
         proc = createMainProcessor()
@@ -41,9 +40,9 @@ class GameInput {
 
             override fun keyDown(keycode: Int): Boolean {
                 when (keycode) {
-                    Keys.G -> learngl.main.profileRequested = true // profile OpenGL
+                    Keys.G -> main.profileRequested = true // profile OpenGL
                     Keys.V -> {
-                        learngl.main.resetViewRequested = true
+                        main.resetViewRequested = true
                     }
                     /*Keys.H -> {
                         learngl.hud.enabled = !learngl.hud.enabled

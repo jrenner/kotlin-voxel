@@ -29,7 +29,7 @@ class PointLight {
     val maxSpeed = 2.0f
     val velocity = Vector3()
 
-    val debugModel: Model by Delegates.lazy {
+    val debugModel: Model by lazy {
         val mb = ModelBuilder()
         val sz = 0.5f
         val div = 12
@@ -38,7 +38,7 @@ class PointLight {
         mb.createSphere(sz, sz, sz, div, div, mat, attr)
     }
 
-    val debugInstance: ModelInstance by Delegates.lazy {
+    val debugInstance: ModelInstance by lazy {
         ModelInstance(debugModel)
     }
 

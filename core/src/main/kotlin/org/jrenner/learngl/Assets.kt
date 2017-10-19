@@ -24,16 +24,16 @@ class Assets {
         texParam.magFilter = TextureFilter.Linear
         texParam.minFilter = TextureFilter.MipMapLinearLinear
 
-        fun loadTex(path: String) = manager.load(texturePath + path, javaClass<Texture>(), texParam)
+        fun loadTex(path: String) = manager.load(texturePath + path, Texture::class.java, texParam)
 
-        array(
+        arrayOf(
                 "dirt.png"
                 //"grass.png"
-        ) forEach {
+        ).forEach {
             loadTex(it)
         }
 
-        manager.load("ui/ui.json", javaClass<Skin>())
+        manager.load("ui/ui.json", Skin::class.java)
         manager.finishLoading()
 
         skin = manager.get("ui/ui.json")
@@ -42,16 +42,16 @@ class Assets {
 
     }
 
-    private fun getTexture(name: String): Texture = manager.get(texturePath + name, javaClass<Texture>())
+    private fun getTexture(name: String): Texture = manager.get(texturePath + name, Texture::class.java)
 
-    val grassTexture by Delegates.lazy { getTexture("grass.png") }
-    val dirtTexture by Delegates.lazy { getTexture("dirt.png") }
+    val grassTexture by lazy { getTexture("grass.png") }
+    val dirtTexture by lazy { getTexture("dirt.png") }
 
     fun setupSkinFonts() {
-        skin.get(javaClass<LabelStyle>()).font = fonts.normal
+        skin.get(LabelStyle::class.java).font = fonts.normal
     }
 
-    val uvTestTexture: Texture by Delegates.lazy {
+    val uvTestTexture: Texture by lazy {
         val sz = 64
         val pixmap = Pixmap(sz, sz, Pixmap.Format.RGBA8888)
         pixmap.setColor(Color.GRAY)

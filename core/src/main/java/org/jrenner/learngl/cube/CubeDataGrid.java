@@ -6,12 +6,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jrenner.learngl.Main;
 import org.jrenner.learngl.gameworld.Chunk;
 import org.jrenner.learngl.gameworld.CubeData;
-import org.jrenner.learngl.gameworld.CubeTypes;
+import org.jrenner.learngl.gameworld.CubeType;
 
 import java.util.Iterator;
 
+import static org.jrenner.learngl.utils.ToolsKt.threeIntegerHashCode;
+
 public class CubeDataGrid implements Iterable<CubeData> {
-	private static final int chunkSize = Chunk.OBJECT$.getChunkSize();
+	private static final int chunkSize = Chunk.Companion.getChunkSize();
 	public static int width = chunkSize;
 	public static int height = chunkSize;
 	public static int depth = chunkSize;
@@ -45,7 +47,7 @@ public class CubeDataGrid implements Iterable<CubeData> {
 
 	public static CubeDataGrid create(float originX, float originY, float originZ) {
 		//CubeDataGrid cdg = Pools.obtain(CubeDataGrid.class);
-		CubeDataGrid cdg = Main.OBJECT$.getMainCDGPool().obtain();
+		CubeDataGrid cdg = Main.Companion.getMainCDGPool().obtain();
 		cdg.init(originX, originY, originZ);
 		return cdg;
 	}
@@ -114,7 +116,7 @@ public class CubeDataGrid implements Iterable<CubeData> {
 		int worldZ = MathUtils.floor(zf);
 		for (int worldY = this.y + height-1; worldY >= this.y; worldY--) {
 			CubeData cube = getCubeAt(worldX, worldY, worldZ);
-			if (cube.getCubeType() != CubeTypes.Void) {
+			if (cube.getCubeType() != CubeType.Void) {
 				return worldY;
 			}
 		}
@@ -199,7 +201,7 @@ public class CubeDataGrid implements Iterable<CubeData> {
 	public int numberOfNonVoidCubes() {
 		int total = 0;
 		for (CubeData cube : this) {
-			if (cube.getCubeType() != CubeTypes.Void) {
+			if (cube.getCubeType() != CubeType.Void) {
 				total++;
 			}
 		}
@@ -211,12 +213,12 @@ public class CubeDataGrid implements Iterable<CubeData> {
 			Pools.free(cube);
 		}*/
 		//Pools.free(this);
-		Main.OBJECT$.getMainCDGPool().free(this);
+		Main.Companion.getMainCDGPool().free(this);
 	}
 
 	@Override
 	public int hashCode() {
-		return org.jrenner.learngl.utils.UtilsPackage.threeIntegerHashCode(x, y, z);
+		return threeIntegerHashCode(x, y, z);
 	}
 
 	@Override

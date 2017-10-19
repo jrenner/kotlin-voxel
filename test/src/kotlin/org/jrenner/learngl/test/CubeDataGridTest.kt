@@ -1,8 +1,6 @@
 package org.jrenner.learngl.test
 
-import org.junit.Test as test
-import org.junit.Before as before
-import org.junit.BeforeClass as beforeClass
+import org.junit.Test
 import org.junit.Assert.*
 import org.jrenner.learngl.cube.CubeDataGrid
 import com.badlogic.gdx.utils.Array as Arr
@@ -11,8 +9,13 @@ import org.jrenner.learngl.utils.IntVector3
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.GdxRuntimeException
 import com.badlogic.gdx.utils.ObjectSet
+import org.jrenner.learngl.gameworld.Chunk
+import org.jrenner.learngl.gameworld.CubeData
+import org.jrenner.learngl.gameworld.CubeType
+import org.jrenner.learngl.gameworld.World
+import org.jrenner.learngl.utils.calculateHiddenFaces
 import org.jrenner.learngl.utils.threeIntegerHashCode
-import org.jrenner.learngl
+import org.jrenner.learngl.world
 
 
 class CubeDataGridTest {
@@ -25,12 +28,13 @@ class CubeDataGridTest {
     val expectedNumElements = CubeDataGrid.width * CubeDataGrid.height * CubeDataGrid.depth
 
 
-    test fun constructor() {
+    @Test
+    fun constructor() {
         val cdg = basicCDG()
         assertEquals(expectedNumElements, cdg.numElements)
     }
 
-    test fun hashCodeTest() {
+    @Test fun hashCodeTest() {
         val set = ObjectSet<Int>()
         val size = 100
         for (x in 0..size) {
@@ -49,7 +53,7 @@ class CubeDataGridTest {
         }
     }
 
-    test fun iteration() {
+    @Test fun iteration() {
         // test multiple times to test reset() method
         val cdg = basicCDG()
         for (n in 1..3) {
@@ -62,7 +66,7 @@ class CubeDataGridTest {
     }
 
     /** test iteration order of Y, then X, then Z */
-    test fun iterationOrder() {
+    @Test fun iterationOrder() {
         val cdg = basicCDG()
         val grid = cdg.grid
         val manualCollection = Arr<CubeData>()
@@ -81,23 +85,23 @@ class CubeDataGridTest {
         assertEquals(manualCollection.size, iteratorCollection.size)
         val manualPos = Vector3()
         val iteratorPos = Vector3()
-        for (i in 0..manualCollection.size - 1) {
-            manualPos set manualCollection.get(i).getPositionTempVec()
-            iteratorPos set iteratorCollection.get(i).getPositionTempVec()
+        for (i in 0 until manualCollection.size) {
+            manualPos.set(manualCollection.get(i).getPositionTempVec())
+            iteratorPos.set(iteratorCollection.get(i).getPositionTempVec())
             assertEquals(manualPos, iteratorPos)
         }
     }
 
-    test fun hasCube() {
+    @Test fun hasCube() {
         val width = CubeDataGrid.width
         val height = CubeDataGrid.height
         val depth = CubeDataGrid.depth
 
         val cdg = basicCDG()
         val under = 0.99f
-        for (x in 0..width-1) {
-            for (y in 0..height-1) {
-                for (z in 0..depth-1) {
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                for (z in 0 until depth) {
                     assertTrue(cdg.hasCubeAt(x.toFloat(), y.toFloat(), z.toFloat()))
                     assertTrue(cdg.hasCubeAt(x + under, y + under, z + under))
                 }
@@ -110,7 +114,7 @@ class CubeDataGridTest {
         assertFalse(cdg.hasCubeAt(width + 0.01f, height + 0.01f, depth + 0.01f))
     }
 
-    test fun getNeighbor() {
+    @Test fun getNeighbor() {
         val width = CubeDataGrid.width
         val height = CubeDataGrid.height
         val depth = CubeDataGrid.depth
@@ -136,7 +140,7 @@ class CubeDataGridTest {
         }
     }
 
-    test fun chunkElevation() {
+    @Test fun chunkElevation() {
         val cdg = basicCDG()
         val maxElevation = 5
         for (cube in cdg) {
@@ -149,7 +153,7 @@ class CubeDataGridTest {
         fun CubeDataGrid.test(x: Float, z: Float, expected: Int) {
             assertEquals(expected, this.getElevation(x, z))
         }
-        val sz = world.Chunk.chunkSize
+        val sz = Chunk.chunkSize
         println("chunk size: $sz")
         cdg.test(0f, 0f, maxElevation)
         cdg.test(0f, sz-1f, maxElevation)
@@ -162,7 +166,7 @@ class CubeDataGridTest {
         }
 
         val cdg2 = basicCDG()
-        cdg2 forEach { it.cubeType = CubeType.Grass }
+        cdg2.forEach { it.cubeType = CubeType.Grass }
         cdg2.getCubeAt(0f, 5f, 0f).cubeType = CubeType.Void
         cdg2.test(0f, 0f, expected = sz-1)
         cdg2.getCubeAt(0f, 3f, 0f).cubeType = CubeType.Void
@@ -181,15 +185,20 @@ class WorldTest {
         return w
     }
 
-    test fun chunkDivisionCubeCount() {
+    @Test fun chunkDivisionCubeCount() {
         fun testCubeCount(szMult: Int) {
-            val sz = szMult * learngl.world.Chunk.chunkSize
-            if (sz % learngl.world.Chunk.chunkSize != 0) {
+            val sz = szMult * Chunk.chunkSize
+            if (sz % Chunk.chunkSize != 0) {
                 throw GdxRuntimeException("Invalid world size, world size must be divisible by chunk size")
             }
             val world = createWorld(sz, sz, sz)
             val expectedTotalCubes = sz * sz * sz
-            val totalCubes = world.chunks.fold(0, {(value, chunk) -> value + chunk.dataGrid.numElements })
+            var ct = 0
+            world.chunks.forEach {
+                ct += it.dataGrid.numElements
+            }
+            val totalCubes = ct
+            //val totalCubes = world.chunks.fold(0, {(value: Int, chunk: Chunk!) -> value + chunk.dataGrid.numElements })
             assertEquals(expectedTotalCubes, totalCubes)
         }
         for (worldSize in 1..4) {
@@ -197,7 +206,7 @@ class WorldTest {
         }
     }
 
-    test fun chunkDivisionChunkCount() {
+    @Test fun chunkDivisionChunkCount() {
         fun assertCounts(world: World, xCount: Int, yCount: Int, zCount: Int) {
             //println("world: ${world.width}, ${world.height}, ${world.depth}")
             assertEquals(world.numChunksX, xCount)
@@ -205,7 +214,7 @@ class WorldTest {
             assertEquals(world.numChunksZ, zCount)
         }
 
-        val sz = world.Chunk.chunkSize
+        val sz = Chunk.chunkSize
 
         var w = createWorld(sz, sz, sz)
         assertCounts(w, 1, 1, 1)
@@ -222,8 +231,8 @@ class WorldTest {
 
     }
 
-    test fun crossChunkGetNeighbor() {
-        val sz = learngl.world.Chunk.chunkSize
+    @Test fun crossChunkGetNeighbor() {
+        val sz = Chunk.chunkSize
         var world = createWorld(sz, sz, sz)
 
         fun testNeighbor(x: Float, y: Float, z: Float) {
@@ -250,7 +259,7 @@ class WorldTest {
         }
     }
 
-    test fun hiddenFaces() {
+    @Test fun hiddenFaces() {
         fun createTestWorld(w: Int, h: Int, d: Int): World {
             val wor = createWorld(w, h, d)
             wor.calculateHiddenFaces()
@@ -293,11 +302,11 @@ class WorldTest {
         world2.testHiddenFaces(15.0f, 15.0f, 8.0f, expected = 4)
     }
 
-    test fun testChunkSnapping() {
+    @Test fun testChunkSnapping() {
         // world size is actually irrelvant to this test, see world.snapToChunkCenter method contents for details
         val w = createWorld(8, 8, 8)
         val v = Vector3()
-        val sz = world.Chunk.chunkSize
+        val sz = Chunk.chunkSize
         val szf = sz.toFloat()
         val origin = Vector3()
         val delta = 0.00001f
@@ -306,7 +315,7 @@ class WorldTest {
             assertEquals(origin.y, w.snapToChunkOrigin(v.y), delta)
             assertEquals(origin.z, w.snapToChunkOrigin(v.z), delta)
 
-            val centerOffset = world.Chunk.chunkSize / 2f
+            val centerOffset = Chunk.chunkSize / 2f
             assertEquals(centerOffset + origin.x, w.snapToChunkCenter(v.x), delta)
             assertEquals(centerOffset + origin.y, w.snapToChunkCenter(v.y), delta)
             assertEquals(centerOffset + origin.z, w.snapToChunkCenter(v.z), delta)
@@ -340,7 +349,7 @@ class WorldTest {
         test()
     }
 
-    test fun hasCube_and_hasChunk() {
+    @Test fun hasCube_and_hasChunk() {
         val sz = 32
         val w = createWorld(sz, sz, sz)
         val max = sz-1
@@ -370,7 +379,7 @@ class WorldTest {
         testHasNot(fsz, fsz, fsz)
     }
     
-    test fun getCube() {
+    @Test fun getCube() {
         val sz = 32
         val max = sz-1
         val w = createWorld(sz, sz, sz)
@@ -398,7 +407,7 @@ class WorldTest {
         }
     }
 
-    test fun getChunk() {
+    @Test fun getChunk() {
         val sz = 32
         val max = sz-1
         val w = createWorld(sz, sz, sz)
@@ -408,7 +417,7 @@ class WorldTest {
             val worldCube = w.getCubeAt(x, y, z)
             val chunkCube = chunk.dataGrid.getCubeAt(x, y, z)
             assertEquals(worldCube, chunkCube)
-            assertTrue(worldCube.identityEquals(chunkCube))
+            assertTrue(worldCube == chunkCube)
         }
 
         for (x in 0..max) {

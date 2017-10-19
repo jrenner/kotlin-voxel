@@ -8,7 +8,7 @@ object Direction {
     val East = 0x10
     val West = 0x20
 
-    val all = intArray(Up, Down, North, South, East, West)
+    val all = arrayOf(Up, Down, North, South, East, West)
     val allSize = 6
     val ALL_FACES: Int = 0xFF
 

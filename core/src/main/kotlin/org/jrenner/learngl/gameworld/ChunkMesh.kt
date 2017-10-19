@@ -9,7 +9,6 @@ import org.jrenner.learngl.cube.CubeDataGrid
 import com.badlogic.gdx.math.Vector2
 import kotlin.properties.Delegates
 import org.jrenner.learngl.Direction
-import org.jrenner.learngl
 
 class ChunkMesh() {
     companion object {
@@ -99,7 +98,7 @@ class ChunkMesh() {
         for (cubeData in cdg) {
             //println("create cube at: ${cubeData.position.fmt}")
             //println("cube: ${cubeData.cubeType}")
-            if (cubeData.cubeType != CubeTypes.Void) {
+            if (cubeData.cubeType != CubeType.Void) {
                 addCube(cubeData.getPositionTempVec(), CUBE_SIZE, cubeData.hiddenFaces)
             }
         }

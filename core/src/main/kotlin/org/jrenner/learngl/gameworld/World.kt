@@ -3,21 +3,15 @@ package org.jrenner.learngl.gameworld
 import org.jrenner.learngl.cube.CubeDataGrid
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array as Arr
-import com.badlogic.gdx.utils.GdxRuntimeException
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.ObjectSet
 import org.jrenner.learngl.cube.WorldChunkData
 import com.badlogic.gdx.utils.DelayedRemovalArray
+import com.badlogic.gdx.utils.GdxRuntimeException
 import com.badlogic.gdx.utils.ObjectMap
+import org.jrenner.learngl.*
 import org.jrenner.learngl.utils.calculateHiddenFaces
-import org.jrenner.learngl
-import org.jrenner.learngl.View
-import org.jrenner.learngl.SimplexNoise
-import com.badlogic.gdx.utils
-import org.jrenner.learngl.world
 import org.jrenner.learngl.utils.threeIntegerHashCode
-import com.badlogic.gdx.utils.SnapshotArray
-import org.jrenner.learngl.utils.SimpleTimer
 
 class World(val width: Int, val height: Int, val depth: Int) {
     
@@ -47,7 +41,7 @@ class World(val width: Int, val height: Int, val depth: Int) {
     fun processCreationQueue() {
         synchronized(this) {
             if (chunkCreationQueue.size == 0) return
-            val cdg = chunkCreationQueue.minBy { it.center.dst2(learngl.view.camera.position) }!!
+            val cdg = chunkCreationQueue.minBy { it.center.dst2(view.camera.position) }!!
             //val cdg = chunkCreationQueue.first()
             chunkCreationQueue.remove(cdg)
             val chunk = Chunk.obtain(cdg)
@@ -58,9 +52,9 @@ class World(val width: Int, val height: Int, val depth: Int) {
     fun removeChunksOutOfViewRange() {
         synchronized(this) {
             chunks.begin()
-            for (i in 0..chunks.size - 1) {
+            for (i in 0 until chunks.size) {
                 val chunk = chunks[i]
-                val dist2 = chunk.dataGrid.center.dst2(learngl.view.camera.position)
+                val dist2 = chunk.dataGrid.center.dst2(view.camera.position)
                 if (dist2 > View.maxViewDist * View.maxViewDist) {
                     val hash: Int = chunk.hashCode()
                     chunks.removeIndex(i)
@@ -82,7 +76,7 @@ class World(val width: Int, val height: Int, val depth: Int) {
         for (n in 1..chunksPerFrame) {
             processCreationQueue()
         }
-        if (learngl.frame % 30 == 0L) {
+        if (frame % 30 == 0L) {
             removeChunksOutOfViewRange()
         }
         for (chunk in chunks) {
@@ -119,7 +113,7 @@ class World(val width: Int, val height: Int, val depth: Int) {
         }
     }
 
-    /*fun hasCubeAt(x: Float, y: Float, z: Float): Boolean {
+    fun hasCubeAt(x: Float, y: Float, z: Float): Boolean {
         if (!hasChunkAt(x, y, z)) {
             return false
         } else {
@@ -130,7 +124,7 @@ class World(val width: Int, val height: Int, val depth: Int) {
                 throw GdxRuntimeException("world.hasCubeAt($x, $y, $z), error: world has cube, but chunk doesn't!")
             }
         }
-    }*/
+    }
 
     fun getCubeAt(x: Float, y: Float, z: Float):CubeData {
         val chunk = getChunkAt(x, y, z)
@@ -230,7 +224,7 @@ class World(val width: Int, val height: Int, val depth: Int) {
                     val cdg = CubeDataGrid.create(origin.x, origin.y, origin.z)
                     cdg.init(origin.x, origin.y, origin.z)
                     for (chunk in cdg) {
-                        chunk.cubeType = CubeTypes.Grass
+                        chunk.cubeType = CubeType.Grass
                     }
                     val chunk = Chunk.obtain(cdg)
                     addChunk(chunk)
@@ -250,7 +244,7 @@ class World(val width: Int, val height: Int, val depth: Int) {
     }
 
     object NoiseLayerManager {
-        val allLayers = utils.Array<NoiseLayer>()
+        val allLayers = Arr<NoiseLayer>()
 
         fun addLayer(freq: Float, weight: Float) {
             allLayers.add(NoiseLayer(freq, weight))
@@ -286,9 +280,9 @@ class World(val width: Int, val height: Int, val depth: Int) {
             val z = (cube.zf - cdg.origin.z).toInt()
             val elev = NoiseLayerManager.getNoise(x, z) * wor.height
             if (cube.yf > elev) {
-                cube.cubeType = CubeTypes.Void
+                cube.cubeType = CubeType.Void
             } else {
-                cube.cubeType = CubeTypes.Grass
+                cube.cubeType = CubeType.Grass
             }
         }
         //val elapsed = TimeUtils.nanoTime() - start

@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.StringBuilder
+import org.jrenner.RenStringBuilder
 import org.jrenner.learngl.utils.plus
 
 class HUD {
@@ -38,11 +39,11 @@ class HUD {
         return false
     }
 
-    val sb = StringBuilder()
+    val sb = RenStringBuilder()
 
     fun update(dt: Float) {
         if (isReadyForUpdate()) {
-            sb.delete(0, sb.length)
+            sb.delete(0, sb.sbLength())
             sb + "FPS: " + Gdx.graphics.getFramesPerSecond().toString()
             sb + "\nMemory\n\tJava: ${Gdx.app.getJavaHeap() / 1000000} MB\n\tNative: ${Gdx.app.getNativeHeap() / 1000000} MB"
             sb + "\nChunks: ${world.chunks.size}, Rendered: ${view.chunksRendered}"
