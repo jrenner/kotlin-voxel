@@ -52,11 +52,11 @@ class GameInput {
                         learngl.hiddenFacesEnabled = !learngl.hiddenFacesEnabled
                         println("hideFaces: $org.jrenner.learngl.hiddenFacesEnabled")
                     }*/
-                    Keys.PLUS -> {
+                    Keys.PLUS, Keys.L -> {
                         View.maxViewDist += viewDistChangeDelta
                         println("MAX VIEW DIST: ${View.maxViewDist}")
                     }
-                    Keys.MINUS -> {
+                    Keys.MINUS, Keys.K -> {
 
                         View.maxViewDist -= viewDistChangeDelta
                         println("MAX VIEW DIST: ${View.maxViewDist}")

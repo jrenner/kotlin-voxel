@@ -26,17 +26,19 @@ class Main : ApplicationAdapter() {
     }
 
     val fpsLogger = FPSLogger()
+    lateinit var glProfiler: GLProfiler
 
 
     override fun create() {
         main = this
+        glProfiler = GLProfiler(Gdx.graphics)
+        glProfiler.enable()
         fonts = Fonts()
         assets = Assets()
         assets.load()
         view = View()
         hud = HUD()
         gameInput = GameInput()
-        GLProfiler.enable()
         world = World(8192, 64, 8192)
         view.camera.position.set(world.width / 2f, 50f, world.depth / 2f)
         view.camera.lookAt(world.width.toFloat(), 0f, world.depth / 2f)
@@ -94,16 +96,16 @@ class Main : ApplicationAdapter() {
     fun profileGL() {
         if (profileRequested) {
             profileRequested = false
-            println("calls: ${GLProfiler.calls}")
-            println("draw calls: ${GLProfiler.drawCalls}")
-            val min = GLProfiler.vertexCount.min
-            val max = GLProfiler.vertexCount.max
-            val avg = GLProfiler.vertexCount.average
-            val total = GLProfiler.vertexCount.total
+            println("calls: ${glProfiler.calls}")
+            println("draw calls: ${glProfiler.drawCalls}")
+            val min = glProfiler.vertexCount.min
+            val max = glProfiler.vertexCount.max
+            val avg = glProfiler.vertexCount.average
+            val total = glProfiler.vertexCount.total
             println("vertices: min,boundary: $min, $max - average: $avg - total: $total")
             println("----------------------------------------------")
         }
-        GLProfiler.reset()
+        glProfiler.reset()
     }
 
     override fun resize(width: Int, height: Int) {

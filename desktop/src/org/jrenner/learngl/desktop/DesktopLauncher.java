@@ -1,7 +1,7 @@
 package org.jrenner.learngl.desktop;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import org.jrenner.learngl.Main;
 import org.jrenner.learngl.View;
 
@@ -18,17 +18,13 @@ public class DesktopLauncher {
 			e.printStackTrace();
 			System.exit(0);
 		}
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.backgroundFPS = 60;
-		config.foregroundFPS = 60;
-		config.vSyncEnabled = true;
-		//config.width = 1024;
-		//config.height = 768;
-		config.width = 1880;
-		config.height = 1000;
-		config.fullscreen = false;
-		config.samples = 0;
-		new LwjglApplication(new Main(), config);
+		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+		config.setIdleFPS(60);
+		config.setForegroundFPS(60);
+		config.useVsync(true);
+		config.setWindowedMode(1880, 1000);
+		config.setTitle("Terra - Kotlin Voxel");
+		new Lwjgl3Application(new Main(), config);
 	}
 
 	private static void processArg(String arg) throws Exception {

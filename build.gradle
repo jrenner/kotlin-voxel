@@ -1,9 +1,8 @@
 buildscript {
-    ext.kotlinVersion = "1.1.50"
+    ext.kotlinVersion = "2.1.0"
     repositories {
         mavenLocal()
         mavenCentral()
-        jcenter()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
     dependencies {
@@ -18,11 +17,11 @@ allprojects {
     version = '1.0'
     ext {
         appName = 'Terra'
-        gdxVersion = '1.9.6'
-        roboVMVersion = '2.3.1'
-        box2DLightsVersion = '1.4'
-        ashleyVersion = '1.7.0'
-        aiVersion = '1.8.0'
+        gdxVersion = '1.12.1'
+        roboVMVersion = '2.3.21'
+        box2DLightsVersion = '1.5'
+        ashleyVersion = '1.7.4'
+        aiVersion = '1.8.2'
 }
 
     repositories {
@@ -37,10 +36,10 @@ project(":desktop") {
     apply plugin: "java"
 
     dependencies {
-        compile project(":core")
-        compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+        implementation project(":core")
+        implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+        implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
     }
 }
 
@@ -49,9 +48,9 @@ project(":core") {
     apply plugin: "kotlin"
 
     dependencies {
-        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-	    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-        compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+	    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+        implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
     }
 }
 
@@ -60,8 +59,8 @@ project(":test") {
     apply plugin: "kotlin"
 
     dependencies {
-        compile project(":core")
-        testCompile group: 'junit', name: 'junit', version: '4.11'
+        implementation project(":core")
+        testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     }
 }
 
